@@ -1,32 +1,30 @@
 import { useState } from 'react';
-import ExpenseItem from './ExpenseItem';
 import Card from './Card';
-import { expenses } from '../App';
 import ExpensesFilter from './ExpenseFilter';
+import ExpenseList from '../ExpenseList';
+import ExpenseChart from './ExpenseChart';
 import './Expense.css';
 
-const Expense = (props) => {
+const Expenses = (props) => {
+  const [filteredYear, setFilteredYear] = useState('2023');
+  let filteredInfoText = '2021, 2022 & 2024';
 
-  // TODO: REFACTOR
-  const [filteredYear, setFilteredYear] = useState('2020');
-  const [filteredInfoText, setFilteredInfoText] = useState('2019, 2021 & 2022');
+  if (filteredYear === '2024') {
+    filteredInfoText = '2021, 2022 & 2023';
+  } else if (filteredYear === '2022') {
+    filteredInfoText = '2021, 2023 & 2024';
+  } else {
+    filteredInfoText = '2022, 2023, 2024';
+  }
 
   const filterChangeHandler = (selectedYear) => {
     setFilteredYear(selectedYear);
-    if (selectedYear === '2019') {
-      setFilteredInfoText('2020, 2021 & 2022');
-    } else if (selectedYear === '2020') {
-      setFilteredInfoText('2019, 2021 & 2022');
-    } else if (selectedYear === '2021') {
-      setFilteredInfoText('2019, 2020 & 2022');
-    } else if (selectedYear === '2022') {
-      setFilteredInfoText('2019, 2021 & 2022');
-    } else if (selectedYear === '2023') {
-      setFilteredInfoText('2019, 2021, 2022');
-    } else {
-      setFilteredInfoText('2019, 2021, 2023');
-    }
   };
+
+  const filteredExpenses = props.item.filter((e) => {
+    return e.date.getFullYear().toString() === filteredYear;
+  });
+
   return (
     <>
       <Card className='expenses'>
@@ -35,17 +33,11 @@ const Expense = (props) => {
           onChangeFilter={filterChangeHandler}
         />
         <p>Data for years {filteredInfoText} is hidden.</p>
-        {expenses.map((e) => (
-          <ExpenseItem
-            key={e.id}
-            title={e.title}
-            amount={e.amount}
-            date={e.date}
-          />
-        ))}
+        {/* <ExpenseChart expense={filteredExpenses} /> */}
+        <ExpenseList item={filteredExpenses} />
       </Card>
     </>
   );
 };
 
-export default Expense;
+export default Expenses;
